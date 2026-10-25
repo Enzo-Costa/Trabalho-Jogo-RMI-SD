@@ -168,11 +168,11 @@ public class Jogador {
 
                     if (estado.equals("vit")) {
                         imprimirTabuleiro();
-                        System.out.println("\n🎉 PARABÉNS! VOCÊ VENCEU O JOGO DA VELHA! 🎉\n");
+                        System.out.println("\n[VITORIA] PARABENS! VOCE VENCEU O JOGO DA VELHA!\n");
                         break;
                     } else if (estado.equals("emp")) {
                         imprimirTabuleiro();
-                        System.out.println("\n🤝 O JOGO EMPATOU (DEU VELHA)! 🤝\n");
+                        System.out.println("\n[EMPATE] O JOGO EMPATOU (DEU VELHA)!\n");
                         break;
                     }
 
@@ -183,7 +183,7 @@ public class Jogador {
                     try {
                         msgRecebida = transporte.receber();
                     } catch (SocketTimeoutException te) {
-                        System.err.println("\n⏱️  [TOLERÂNCIA A FALHAS] Timeout de 60s esgotado!");
+                        System.err.println("\n[TIMEOUT] Tolerancia a falhas: limite de 60s esgotado!");
                         System.err.println("    O oponente não respondeu ou desconectou. Encerrando partida.");
                         break;
                     }
@@ -207,7 +207,7 @@ public class Jogador {
                     boolean sequenciaInvalida = (numRecebido != numeroJogada);
 
                     if (jogadaInvalida || sequenciaInvalida) {
-                        System.out.println("\n⚠️  [ALERTA ANTI-CHEAT] Oponente tentou jogada ilegal!");
+                        System.out.println("\n[ANTI-CHEAT] Oponente tentou jogada ilegal!");
                         System.out.println("    Devolvendo a mesma mensagem para forçar correção...\n");
                         transporte.enviar(msgRecebida);
                         continue;
@@ -218,13 +218,13 @@ public class Jogador {
 
                     if (resRecebido.equals("vit")) {
                         imprimirTabuleiro();
-                        System.out.println("\n💀 VOCÊ PERDEU! O oponente completou uma trinca. 💀");
+                        System.out.println("\n[DERROTA] Voce perdeu! O oponente completou uma trinca.");
                         String msgDerrota = montarJson(numeroJogada, jogadaOponente, "der");
                         transporte.enviar(msgDerrota);
                         break;
                     } else if (resRecebido.equals("emp")) {
                         imprimirTabuleiro();
-                        System.out.println("\n🤝 O JOGO EMPATOU (DEU VELHA)! 🤝\n");
+                        System.out.println("\n[EMPATE] O JOGO EMPATOU (DEU VELHA)!\n");
                         break;
                     }
 
@@ -347,8 +347,8 @@ public class Jogador {
                     // Validação Anti-Cheat: verifica integridade do SHA-256
                     String hashVerificacao = calcularSHA256(escolhaJ1 + ":" + saltRecebido);
                     if (!hashVerificacao.equalsIgnoreCase(hashRecebido)) {
-                        System.err.println("\n🚨 [ALERTA DE SEGURANÇA] O hash do oponente não confere com a jogada revelada!");
-                        System.err.println("   Tentativa de trapaça detectada na rede. Partida abortada.");
+                        System.err.println("\n[SEGURANCA] O hash do oponente nao confere com a jogada revelada!");
+                        System.err.println("   Tentativa de trapaca detectada na rede. Partida abortada.");
                         break;
                     }
 
@@ -366,11 +366,11 @@ public class Jogador {
             // Resultado Final
             System.out.println("=======================================================");
             if (inicia && vitoriasJ1 > vitoriasJ2 || !inicia && vitoriasJ2 > vitoriasJ1) {
-                System.out.println("🎉 FIM DE JOGO: PARABÉNS, VOCÊ VENCEU A DISPUTA DE PPT! 🎉");
+                System.out.println("[FIM DE JOGO] PARABENS, VOCE VENCEU A DISPUTA DE PPT!");
             } else if (vitoriasJ1 == vitoriasJ2) {
-                System.out.println("🤝 FIM DE JOGO: O DUELO TERMINOU EMPATADO! 🤝");
+                System.out.println("[FIM DE JOGO] O DUELO TERMINOU EMPATADO!");
             } else {
-                System.out.println("💀 FIM DE JOGO: O OPONENTE VENCEU A DISPUTA DE PPT! 💀");
+                System.out.println("[FIM DE JOGO] O OPONENTE VENCEU A DISPUTA DE PPT!");
             }
             System.out.println("=======================================================\n");
         }
@@ -402,7 +402,7 @@ public class Jogador {
             if (vencedor == 0) {
                 System.out.println("-> Resultado da rodada: EMPATE!");
             } else if ((vencedor == 1 && souJ1) || (vencedor == 2 && !souJ1)) {
-                System.out.println("-> Resultado da rodada: PONTO PARA VOCÊ! 🏆");
+                System.out.println("-> Resultado da rodada: PONTO PARA VOCE!");
             } else {
                 System.out.println("-> Resultado da rodada: Ponto para o oponente.");
             }
@@ -488,7 +488,7 @@ public class Jogador {
 
                     // Validação Anti-Cheat
                     if (!calcularSHA256(dedosJ1 + ":" + saltRecebido).equalsIgnoreCase(hashRecebido)) {
-                        System.err.println("\n🚨 [ALERTA DE SEGURANÇA] Hash incorreto! Trapaça detectada.");
+                        System.err.println("\n[SEGURANCA] Hash incorreto! Tentativa de trapaca detectada.");
                         break;
                     }
                 }
@@ -506,7 +506,7 @@ public class Jogador {
                 System.out.println(">> Soma total: " + soma + " -> Deu " + resultadoParidade.toUpperCase() + "!");
 
                 if ((vencedorRodada == 1 && inicia) || (vencedorRodada == 2 && !inicia)) {
-                    System.out.println("-> Resultado da rodada: PONTO PARA VOCÊ! 🏆");
+                    System.out.println("-> Resultado da rodada: PONTO PARA VOCE!");
                 } else {
                     System.out.println("-> Resultado da rodada: Ponto para o oponente.");
                 }
@@ -522,9 +522,9 @@ public class Jogador {
 
             System.out.println("\n=======================================================");
             if (inicia && vitoriasJ1 > vitoriasJ2 || !inicia && vitoriasJ2 > vitoriasJ1) {
-                System.out.println("🎉 FIM DE JOGO: PARABÉNS, VOCÊ VENCEU O PAR OU ÍMPAR! 🎉");
+                System.out.println("[FIM DE JOGO] PARABENS, VOCE VENCEU O PAR OU IMPAR!");
             } else {
-                System.out.println("💀 FIM DE JOGO: O OPONENTE VENCEU O PAR OU ÍMPAR! 💀");
+                System.out.println("[FIM DE JOGO] O OPONENTE VENCEU O PAR OU IMPAR!");
             }
             System.out.println("=======================================================\n");
         }
@@ -583,7 +583,7 @@ public class Jogador {
         try (Scanner scanner = new Scanner(System.in)) {
             // === FASE 1: CONSULTA RMI ===
             System.out.println("==========================================================");
-            System.out.println("      JOGADOR DISTRIBUÍDO (" + protocolo.toUpperCase() + " • " + jogo.toUpperCase() + ")      ");
+            System.out.println("      JOGADOR DISTRIBUÍDO (" + protocolo.toUpperCase() + " - " + jogo.toUpperCase() + ")      ");
             System.out.println("==========================================================");
             System.out.println("[RMI] Conectando ao Servidor de Match em " + rmiHost + ":" + portaRmi + "...");
 

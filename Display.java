@@ -28,7 +28,7 @@ public class Display {
             System.out.println("==================================================");
             System.out.println("Conta (NN):      " + nn);
             System.out.println("Grupo Multicast: " + multicastIp + ":" + multicastPorta);
-            System.out.println("Suporte:         Jogo da Velha • PPT • Par ou Ímpar");
+            System.out.println("Suporte:         Jogo da Velha | PPT | Par ou Impar");
             System.out.println("Aguardando partidas ao vivo...\n");
 
             byte[] buffer = new byte[1024];
@@ -69,11 +69,11 @@ public class Display {
         String statusVencedor = (vencedorRodada == 0) ? "EMPATE NA RODADA" :
             (vencedorRodada == 1) ? "PONTO PARA O JOGADOR 1" : "PONTO PARA O JOGADOR 2";
 
-        String statusPartida = resultado.equals("vit_j1") ? "🏆 CAMPEÃO DA DISPUTA: JOGADOR 1!" :
-            resultado.equals("vit_j2") ? "🏆 CAMPEÃO DA DISPUTA: JOGADOR 2!" : "⚔️ DISPUTA EM ANDAMENTO";
+        String statusPartida = resultado.equals("vit_j1") ? "[CAMPEAO] VITORIA DO JOGADOR 1!" :
+            resultado.equals("vit_j2") ? "[CAMPEAO] VITORIA DO JOGADOR 2!" : "[STATUS] DISPUTA EM ANDAMENTO";
 
         System.out.println("==================================================");
-        System.out.println("  RODADA #" + num + " • PEDRA, PAPEL E TESOURA (AO VIVO)");
+        System.out.println("  RODADA #" + num + " - PEDRA, PAPEL E TESOURA (AO VIVO)");
         System.out.println("==================================================");
         System.out.println("   Jogador 1: " + obterIconePPT(escolhaJ1) + " " + escolhaJ1);
         System.out.println("   Jogador 2: " + obterIconePPT(escolhaJ2) + " " + escolhaJ2);
@@ -84,9 +84,9 @@ public class Display {
     }
 
     private static String obterIconePPT(String escolha) {
-        if (escolha.contains("PEDRA")) return "[🪨 PEDRA]";
-        if (escolha.contains("PAPEL")) return "[📄 PAPEL]";
-        if (escolha.contains("TESOURA")) return "[✂️ TESOURA]";
+        if (escolha.contains("PEDRA")) return "[PEDRA]";
+        if (escolha.contains("PAPEL")) return "[PAPEL]";
+        if (escolha.contains("TESOURA")) return "[TESOURA]";
         return "[" + escolha + "]";
     }
 
@@ -103,11 +103,11 @@ public class Display {
 
         String paridade = (soma % 2 == 0) ? "PAR" : "ÍMPAR";
         String statusVencedor = (vencedorRodada == 1) ? "PONTO PARA O JOGADOR 1 (" + opcaoJ1 + ")" : "PONTO PARA O JOGADOR 2 (" + opcaoJ2 + ")";
-        String statusPartida = resultado.equals("vit_j1") ? "🏆 CAMPEÃO DO DUELO: JOGADOR 1!" :
-            resultado.equals("vit_j2") ? "🏆 CAMPEÃO DO DUELO: JOGADOR 2!" : "⚔️ DISPUTA EM ANDAMENTO";
+        String statusPartida = resultado.equals("vit_j1") ? "[CAMPEAO] VITORIA DO JOGADOR 1!" :
+            resultado.equals("vit_j2") ? "[CAMPEAO] VITORIA DO JOGADOR 2!" : "[STATUS] DISPUTA EM ANDAMENTO";
 
         System.out.println("==================================================");
-        System.out.println("     RODADA #" + num + " • PAR OU ÍMPAR (AO VIVO)");
+        System.out.println("     RODADA #" + num + " - PAR OU IMPAR (AO VIVO)");
         System.out.println("==================================================");
         System.out.println("   Jogador 1 (" + opcaoJ1 + "): " + dedosJ1 + " dedo(s)");
         System.out.println("   Jogador 2 (" + opcaoJ2 + "): " + dedosJ2 + " dedo(s)");
@@ -145,16 +145,16 @@ public class Display {
         String statusDescricao;
         switch (resultado) {
             case "vit":
-                statusDescricao = "🏆 VITÓRIA DO JOGADOR DA VEZ!";
+                statusDescricao = "[VITORIA] VITORIA DO JOGADOR DA VEZ!";
                 break;
             case "der":
-                statusDescricao = "🏁 PARTIDA CONCLUÍDA (DERROTA CONFIRMADA)";
+                statusDescricao = "[FIM DE JOGO] DERROTA CONFIRMADA";
                 break;
             case "emp":
-                statusDescricao = "🤝 EMPATE (DEU VELHA!)";
+                statusDescricao = "[EMPATE] DEU VELHA!";
                 break;
             default:
-                statusDescricao = "⚔️ EM ANDAMENTO";
+                statusDescricao = "[STATUS] EM ANDAMENTO";
                 break;
         }
 
