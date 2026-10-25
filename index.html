@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suíte de Jogos Distribuídos • Sistemas Distribuídos • UERJ</title>
+
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        })();
+    </script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-surface: #ffffff;
+            --bg-subtle: #f1f5f9;
+            --border: #e2e8f0;
+            --border-strong: #cbd5e1;
+
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+
+            --primary: #0284c7;
+            --primary-dark: #0369a1;
+            --primary-light: #e0f2fe;
+
+            --pitch-bg: #f0fdf4;
+            --pitch-border: #a7f3d0;
+            --pitch-title: #065f46;
+            --pitch-text: #047857;
+            --pitch-btn: #059669;
+            --pitch-btn-hover: #047857;
+
+            --table-zebra: #fafafa;
+            --tag-bg: #e2e8f0;
+            --tag-color: #0f172a;
+
+            --warning-bg: #fef3c7;
+            --warning-color: #92400e;
+            --rmi-bg: #ede9fe;
+            --rmi-color: #5b21b6;
+
+            --diagram-bg: #0f172a;
+            --diagram-border: #1e293b;
+
+            --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        }
+
+        html[data-theme="dark"] {
+            --bg-page: #0d1117;
+            --bg-surface: #161b22;
+            --bg-subtle: #21262d;
+            --border: #30363d;
+            --border-strong: #8b949e;
+
+            --text-primary: #f0f6fc;
+            --text-secondary: #c9d1d9;
+            --text-muted: #8b949e;
+
+            --primary: #58a6ff;
+            --primary-dark: #79c0ff;
+            --primary-light: rgba(56, 139, 253, 0.15);
+
+            --pitch-bg: #091f16;
+            --pitch-border: #238636;
+            --pitch-title: #3fb950;
+            --pitch-text: #7ee787;
+            --pitch-btn: #238636;
+            --pitch-btn-hover: #2ea043;
+
+            --table-zebra: #1c2128;
+            --tag-bg: #21262d;
+            --tag-color: #f0f6fc;
+
+            --warning-bg: rgba(217, 119, 6, 0.2);
+            --warning-color: #fcd34d;
+            --rmi-bg: rgba(139, 92, 246, 0.2);
+            --rmi-color: #c4b5fd;
+
+            --diagram-bg: #030712;
+            --diagram-border: #30363d;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-page);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 2rem 1rem 4rem 1rem;
+            -webkit-font-smoothing: antialiased;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        .academic-header {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem 1.75rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.65rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .institutional-badge {
+            display: inline-block;
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--primary-dark);
+        }
+
+        .theme-toggle {
+            background: var(--bg-subtle);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all 0.15s ease;
+            font-family: inherit;
+        }
+
+        .theme-toggle:hover {
+            color: var(--text-primary);
+            border-color: var(--border-strong);
+            background: var(--border);
+        }
+
+        .academic-header h1 {
+            font-size: 1.85rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+            line-height: 1.25;
+            margin-bottom: 0.5rem;
+        }
+
+        .academic-header .subtitle {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.25rem;
+        }
+
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.75rem 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.88rem;
+        }
+
+        .meta-item strong {
+            display: block;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .meta-item span {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .pitch-section {
+            background: var(--pitch-bg);
+            border: 1.5px solid var(--pitch-border);
+            border-radius: 8px;
+            padding: 1.5rem 1.75rem;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        @media (min-width: 640px) {
+            .pitch-section {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
+        }
+
+        .pitch-text h2 {
+            font-size: 1.15rem;
+            color: var(--pitch-title);
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .pitch-text p {
+            font-size: 0.92rem;
+            color: var(--pitch-text);
+            margin: 0;
+            max-width: 580px;
+        }
+
+        .btn-pitch {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background: var(--pitch-btn);
+            color: #ffffff;
+            font-size: 0.92rem;
+            font-weight: 600;
+            padding: 0.75rem 1.35rem;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background-color 0.15s ease;
+            white-space: nowrap;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-pitch:hover {
+            background: var(--pitch-btn-hover);
+        }
+
+        /* Cards das Seções */
+        .section-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.75rem;
+            margin-bottom: 1.75rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Diagrama da Arquitetura */
+        .diagram-wrapper {
+            background: var(--diagram-bg);
+            border: 1px solid var(--diagram-border);
+            border-radius: 6px;
+            padding: 1.25rem;
+            margin: 1.25rem 0;
+            overflow-x: auto;
+        }
+
+        .diagram-code {
+            font-family: var(--font-mono);
+            font-size: 0.82rem;
+            line-height: 1.45;
+            color: #38bdf8;
+            margin: 0;
+            white-space: pre;
+        }
+
+        /* Lista das Etapas */
+        .steps-container {
+            background: var(--bg-subtle);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1.25rem 1.5rem;
+            margin: 1.25rem 0;
+        }
+
+        .steps-title {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 0.75rem;
+        }
+
+        .steps-list {
+            padding-left: 1.25rem;
+            color: var(--text-secondary);
+            font-size: 0.92rem;
+        }
+
+        .steps-list li {
+            margin-bottom: 0.65rem;
+            line-height: 1.5;
+        }
+
+        .steps-list strong {
+            color: var(--text-primary);
+        }
+
+        /* Tabelas */
+        .table-responsive {
+            overflow-x: auto;
+            margin: 1.25rem 0;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+        }
+
+        .data-table th {
+            background: var(--bg-subtle);
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .data-table tr:nth-child(even) td {
+            background: var(--table-zebra);
+        }
+
+        .tag-proto {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            background: var(--tag-bg);
+            color: var(--tag-color);
+            font-family: var(--font-mono);
+        }
+
+        .tag-tcp {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .tag-udp {
+            background: var(--warning-bg);
+            color: var(--warning-color);
+        }
+
+        .tag-rmi {
+            background: var(--rmi-bg);
+            color: var(--rmi-color);
+        }
+
+        /* Blocos de Código */
+        .code-block {
+            position: relative;
+            background: var(--diagram-bg);
+            border: 1px solid var(--diagram-border);
+            border-radius: 6px;
+            padding: 1rem 1.25rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+
+        .code-block pre {
+            margin: 0;
+            font-family: var(--font-mono);
+            font-size: 0.88rem;
+            color: #f1f5f9;
+            line-height: 1.5;
+        }
+
+        .copy-button {
+            position: absolute;
+            top: 0.6rem;
+            right: 0.6rem;
+            background: #1e293b;
+            color: #94a3b8;
+            border: 1px solid #334155;
+            border-radius: 4px;
+            padding: 0.25rem 0.6rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .copy-button:hover {
+            color: #ffffff;
+            background: #334155;
+        }
+
+        code {
+            font-family: var(--font-mono);
+            font-size: 0.88em;
+            background: var(--bg-subtle);
+            color: var(--primary-dark);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+        }
+
+        .code-block code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+            border: none;
+        }
+
+        /* Lista de Itens (Bullet Points) */
+        .bullet-list {
+            padding-left: 1.35rem;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin: 1rem 0;
+        }
+
+        .bullet-list li {
+            margin-bottom: 0.85rem;
+            line-height: 1.6;
+        }
+
+        .bullet-list strong {
+            color: var(--text-primary);
+        }
+
+        /* Rodapé */
+        footer {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        @media print {
+            body {
+                background: #ffffff;
+                color: #000000;
+                padding: 0;
+            }
+
+            .section-card,
+            .academic-header {
+                box-shadow: none;
+                border: 1px solid #ccc;
+            }
+
+            .copy-button {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- Cabeçalho do Trabalho -->
+        <header class="academic-header">
+            <div class="header-top">
+                <span class="institutional-badge">UERJ • IME • Departamento de Informática e Ciência da
+                    Computação</span>
+                <button id="themeToggleBtn" class="theme-toggle" onclick="toggleTheme()"
+                    aria-label="Alternar tema claro e escuro">
+                    🌙 Modo Escuro
+                </button>
+            </div>
+            <h1>Suíte de Jogos Distribuídos</h1>
+            <p class="subtitle">Trabalho Prático da Disciplina de Sistemas Distribuídos: Jogo da Velha, Pedra-Papel-Tesoura e Par ou Ímpar • Prof. Alexandre Sztajnberg</p>
+
+            <div class="meta-grid">
+                <div class="meta-item">
+                    <strong>Disciplina</strong>
+                    <span>Sistemas Distribuídos</span>
+                </div>
+                <div class="meta-item">
+                    <strong>Professor</strong>
+                    <span>Alexandre Sztajnberg</span>
+                </div>
+                <div class="meta-item">
+                    <strong>Alunos</strong>
+                    <span>Enzo Costa e Marcos Alves</span>
+                </div>
+                <div class="meta-item">
+                    <strong>Tecnologias</strong>
+                    <span>Java RMI, TCP/UDP, Multicast e SHA-256</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Apresentação em Vídeo (Pitch) -->
+        <section class="pitch-section">
+            <div class="pitch-text">
+                <h2>🎥 Vídeo de Apresentação (Pitch de 10 min)</h2>
+                <p>Gravamos uma explicação em vídeo detalhando a arquitetura em 3 programas Java, a interface modular <code>IJogo</code>, o pareamento via RMI, a comunicação P2P via Sockets TCP/UDP, a garantia de honestidade criptográfica com Commit-Reveal (SHA-256) em jogos simultâneos e a exibição ao vivo no Multicast.</p>
+            </div>
+            <!-- Substitua a URL abaixo pelo link do seu vídeo do YouTube ou Drive -->
+            <a href="https://youtu.be/SEU_VIDEO_AQUI" target="_blank" class="btn-pitch">
+                Assistir ao Vídeo no YouTube &rarr;
+            </a>
+        </section>
+
+        <!-- 1. Como o Sistema Funciona -->
+        <section class="section-card">
+            <h2 class="section-title">1. Como o Sistema Funciona (Arquitetura)</h2>
+            <p>Para manter o código simples e fácil de manter, organizamos a solução em <strong>apenas 3 programas Java
+                    independentes</strong> na raiz do projeto, sem nenhuma biblioteca externa. Eles se comunicam
+                seguindo exatamente o fluxo da <strong>Figura 1</strong> da especificação:</p>
+
+            <div class="diagram-wrapper">
+                <!-- prettier-ignore -->
+                <pre class="diagram-code">+-----------------------------------------------------------------------------------+
+|               1. SERVIDOR DE MATCH (RMI) — [Passo 1: Bind no Registry]            |
+|                      VM 152.92.236.14 • RMIRegistry Porta 98NN                    |
+|        [Passo 3: lock.wait() retém Jogador 1 até Jogador 2 entrar no Match]       |
++-----------------------------------------------------------------------------------+
+   |         ^                                                         ^         |   
+   |         | (Passo 2) getOponent(...)     (Passo 4) getOponent(...) |         |   
+   |         | (aguarda oponente)            (completa o par)          |         |   
+   v         |                                                         |         v   
+ (Passo 6) Retorno RMI:                                 (Passo 6) Retorno RMI:       
+ Oponente + inicia: true                                Oponente + inicia: false     
++--------------------------+    (Passo 7) Handshake    +--------------------------+
+|       2. JOGADOR 1       | <=========================> |       2. JOGADOR 2       |
+|    VM: 152.92.236.16     | (Passo 8) Troca de Jogadas |    VM: 152.92.236.17     |
+|   (inicia: true - 'X')   |   Sockets P2P (TCP / UDP)   |   (inicia: false - 'O')  |
++--------------------------+                             +--------------------------+
+             |                                                         |             
+             | (Passo 5) Multicast UDP                  Multicast UDP  |             
+             v                                                         v             
++-----------------------------------------------------------------------------------+
+|                           3. GRUPO MULTICAST DE DISPLAYS                          |
+|         [Passo 5: joinGroup() — Display 1 (Canal 1), Display 2, Display N]        |
+|                               IP: 225.1.1.NN:88NN                                 |
++-----------------------------------------------------------------------------------+</pre>
+            </div>
+
+            <div class="steps-container">
+                <div class="steps-title">Passo a passo da partida:</div>
+                <ol class="steps-list">
+                    <li><strong>Passo 1 (Inicialização do Servidor):</strong> O <code>ServidorMatch</code> sobe na
+                        máquina do servidor (<code>152.92.236.14</code>), inicia o registro RMI na porta
+                        <code>98NN</code> e publica o serviço de pareamento.
+                    </li>
+                    <li><strong>Passo 2 (Entrada do Jogador 1):</strong> O primeiro jogador chama
+                        <code>getOponent(...)</code> via RMI informando seu IP, porta e se deseja jogar por TCP ou UDP.
+                    </li>
+                    <li><strong>Passo 3 (Espera Sincronizada):</strong> Como ainda não há adversário com o mesmo
+                        protocolo na fila, o servidor coloca essa chamada em espera através de um
+                        <code>wait(60000)</code>.
+                    </li>
+                    <li><strong>Passo 4 (Chegada do Jogador 2):</strong> O segundo jogador se conecta ao RMI solicitando
+                        uma partida com o mesmo protocolo, completando a dupla.</li>
+                    <li><strong>Passo 5 (Entrada dos Displays):</strong> Enquanto isso, os espectadores que quiserem
+                        assistir à partida rodam o <code>Display</code>, que entra no grupo multicast
+                        <code>225.1.1.NN:88NN</code>.
+                    </li>
+                    <li><strong>Passo 6 (Liberação do RMI):</strong> O servidor acorda a thread do Jogador 1 (com
+                        <code>notifyAll()</code>) e devolve para os dois jogadores os dados do adversário e quem fará a
+                        primeira jogada (<code>inicia: true/false</code>).
+                    </li>
+                    <li><strong>Passo 7 (Conexão Direta entre os Jogadores):</strong> Os jogadores conectam seus sockets
+                        diretamente (TCP ou UDP) para iniciar o jogo.</li>
+                    <li><strong>Passo 8 (Partida em Turnos e Multicast):</strong> Os jogadores alternam o envio de
+                        jogadas em JSON via Socket. A cada lance realizado, quem jogou envia o estado atualizado para
+                        o grupo Multicast para os Displays exibirem aos espectadores em tempo real.</li>
+                </ol>
+            </div>
+
+            <div class="steps-container" style="margin-top: 1.25rem;">
+                <div class="steps-title">Suíte Multi-Jogos e Abstração Modular (Interface IJogo):</div>
+                <p style="font-size: 0.92rem; margin-bottom: 0.5rem;">Além do Jogo da Velha original, a infraestrutura foi projetada para suportar múltiplos jogos em rede (<strong>Pedra, Papel e Tesoura</strong> e <strong>Par ou Ímpar</strong>) de forma modular e limpa:</p>
+                <ul class="steps-list" style="margin-top: 0.5rem;">
+                    <li><strong>Servidor de Pareamento (<code>ServidorMatch</code>):</strong> Gerencia filas concorrentes segregadas por chave composta (<code>protocolo + "_" + jogo</code>), permitindo que partidas de Velha, PPT e Par ou Ímpar ocorram simultaneamente no laboratório sem colisão.</li>
+                    <li><strong>Interface Polimórfica (<code>IJogo</code> em <code>Jogador</code>):</strong> As regras de cada jogo (lógica de rodadas, entradas e apuração de placar) são isoladas em classes dedicadas (<code>JogoVelha</code>, <code>JogoPPT</code>, <code>JogoParOuImpar</code>), reaproveitando 100% da camada de rede e transporte (TCP/UDP).</li>
+                    <li><strong>Display Multicast Adaptativo (<code>Display</code>):</strong> Lê o campo <code>"jogo"</code> em cada datagrama UDP Multicast e adapta dinamicamente sua renderização no terminal (grade 3x3 para Velha, duelo de ícones para PPT e contagem de dedos com paridade para Par ou Ímpar).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 2. Mapeamento de Máquinas e Portas -->
+        <section class="section-card">
+            <h2 class="section-title">2. Máquinas, Portas e Protocolos</h2>
+            <p>Configuração de rede utilizada nos testes nas máquinas virtuais da UERJ. O valor de <code>NN</code>
+                representa o número da conta atribuída ao aluno no laboratório (por exemplo, conta 14 utiliza
+                <code>NN = 14</code>):
+            </p>
+
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Componente</th>
+                            <th>Onde Roda (VM)</th>
+                            <th>Porta / Endereço</th>
+                            <th>Protocolo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Servidor de Matchmaking</strong></td>
+                            <td><code>152.92.236.14</code></td>
+                            <td>Porta <code>9800 + NN</code> (ex: <code>9814</code>)</td>
+                            <td><span class="tag-proto tag-rmi">Java RMI</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Jogador 1 (Quem inicia)</strong></td>
+                            <td><code>152.92.236.16</code></td>
+                            <td>Porta livre (ex: <code>5001</code>)</td>
+                            <td><span class="tag-proto tag-tcp">TCP</span> ou <span class="tag-proto tag-udp">UDP</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Jogador 2 (Segundo a jogar)</strong></td>
+                            <td><code>152.92.236.17</code></td>
+                            <td>Porta livre (ex: <code>5002</code>)</td>
+                            <td><span class="tag-proto tag-tcp">TCP</span> ou <span class="tag-proto tag-udp">UDP</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Displays (Espectadores)</strong></td>
+                            <td>Qualquer máquina</td>
+                            <td>IP <code>225.1.1.NN</code> na Porta <code>8800 + NN</code> (ex: <code>8814</code>)</td>
+                            <td><span class="tag-proto tag-udp">UDP Multicast</span> (Velha, PPT e Par ou Ímpar)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 3. Formato das Mensagens (JSON) -->
+        <section class="section-card">
+            <h2 class="section-title">3. Formato das Mensagens (JSON)</h2>
+            <p>Para não depender de bibliotecas externas (como Gson ou Jackson), toda a montagem e leitura de JSON foi
+                feita com tratamento simples de Strings em Java puro.</p>
+
+            <h3 style="font-size: 1rem; font-weight: 600; margin: 1.25rem 0 0.5rem 0;">3.1. Pareamento no RMI</h3>
+            <p style="font-size: 0.9rem; margin-bottom: 0.5rem;">O que o jogador envia ao chamar
+                <code>getOponent(...)</code> e o que o servidor devolve (o campo <code>"jogo"</code> aceita <code>"velha"</code>, <code>"ppt"</code> ou <code>"par_impar"</code>; se omitido, assume <code>"velha"</code> por retrocompatibilidade):
+            </p>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 50%;">Entrada enviada ao RMI (jsonIn)</th>
+                            <th style="width: 50%;">Resposta devolvida pelo Servidor (jsonRet)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <code>{"ip":"152.92.236.16","porta":5001,"protocolo":"tcp","jogo":"velha"}</code>
+                            </td>
+                            <td>
+                                <code>{"ip":"152.92.236.17","porta":5002,"jogo":"velha","inicia":true}</code>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 style="font-size: 1rem; font-weight: 600; margin: 1.5rem 0 0.5rem 0;">3.2. Jogo da Velha (Turnos Alternados - Visão Pública)</h3>
+            <p style="font-size: 0.9rem; margin-bottom: 0.5rem;">A cada lance, os jogadores enviam um para o outro e
+                para os displays exatamente esta estrutura de mensagem:</p>
+
+            <div class="code-block">
+                <pre><code>{
+  "Numero": 0,
+  "Jogada": 4,
+  "Tabuleiro": [0, 0, 0, 0, 1, 0, 0, 0, 0],
+  "Resultado": "jog"
+}</code></pre>
+            </div>
+
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Campo</th>
+                            <th>Tipo</th>
+                            <th>Valores</th>
+                            <th>Significado no Jogo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>Numero</code></td>
+                            <td>Inteiro</td>
+                            <td><code>0</code> a <code>8</code></td>
+                            <td>Contador sequencial do turno. Garante que ninguém pule ou repita jogadas.</td>
+                        </tr>
+                        <tr>
+                            <td><code>Jogada</code></td>
+                            <td>Inteiro</td>
+                            <td><code>0</code> a <code>8</code></td>
+                            <td>Posição escolhida no tabuleiro (de 0 a 8).</td>
+                        </tr>
+                        <tr>
+                            <td><code>Tabuleiro</code></td>
+                            <td>Lista de 9 inteiros</td>
+                            <td><code>0</code>, <code>1</code> ou <code>2</code></td>
+                            <td>Estado de cada casa: <code>0</code> = vazio, <code>1</code> = X (Jogador 1),
+                                <code>2</code> = O (Jogador 2).
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><code>Resultado</code></td>
+                            <td>Texto</td>
+                            <td><code>"jog"</code>, <code>"vit"</code>, <code>"der"</code>, <code>"emp"</code></td>
+                            <td>Situação da partida: em andamento (<code>jog</code>), vitória (<code>vit</code>),
+                                derrota (<code>der</code>) ou empate (<code>emp</code>).</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 style="font-size: 1rem; font-weight: 600; margin: 1.5rem 0 0.5rem 0;">3.3. Pedra, Papel e Tesoura (Jogadas Simultâneas - PPT)</h3>
+            <p style="font-size: 0.9rem; margin-bottom: 0.5rem;">Disputa em melhor de 3 rodadas. Ao final de cada rodada apurada via Commit-Reveal (SHA-256), o Jogador 1 publica o estado da disputa no Multicast:</p>
+
+            <div class="code-block">
+                <pre><code>{
+  "jogo": "ppt",
+  "Numero": 1,
+  "EscolhaJ1": "pedra",
+  "EscolhaJ2": "tesoura",
+  "VencedorRodada": 1,
+  "Placar": [1, 0],
+  "Resultado": "jog"
+}</code></pre>
+            </div>
+
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Campo</th>
+                            <th>Tipo</th>
+                            <th>Valores</th>
+                            <th>Significado no Jogo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>jogo</code></td>
+                            <td>Texto</td>
+                            <td><code>"ppt"</code></td>
+                            <td>Identificador que instrui o <code>Display</code> a ativar a tela de Pedra, Papel e Tesoura.</td>
+                        </tr>
+                        <tr>
+                            <td><code>Numero</code></td>
+                            <td>Inteiro</td>
+                            <td><code>1</code>, <code>2</code> ou <code>3</code></td>
+                            <td>Número da rodada atual na série de melhor de 3.</td>
+                        </tr>
+                        <tr>
+                            <td><code>EscolhaJ1</code></td>
+                            <td>Texto</td>
+                            <td><code>"pedra"</code>, <code>"papel"</code>, <code>"tesoura"</code></td>
+                            <td>Escolha revelada e validada do Jogador 1.</td>
+                        </tr>
+                        <tr>
+                            <td><code>EscolhaJ2</code></td>
+                            <td>Texto</td>
+                            <td><code>"pedra"</code>, <code>"papel"</code>, <code>"tesoura"</code></td>
+                            <td>Escolha enviada abertamente pelo Jogador 2.</td>
+                        </tr>
+                        <tr>
+                            <td><code>VencedorRodada</code></td>
+                            <td>Inteiro</td>
+                            <td><code>0</code>, <code>1</code> ou <code>2</code></td>
+                            <td>Resultado da rodada: <code>0</code> = empate, <code>1</code> = ponto J1, <code>2</code> = ponto J2.</td>
+                        </tr>
+                        <tr>
+                            <td><code>Placar</code></td>
+                            <td>Lista com 2 inteiros</td>
+                            <td><code>[vitJ1, vitJ2]</code></td>
+                            <td>Placar cumulativo da melhor de 3.</td>
+                        </tr>
+                        <tr>
+                            <td><code>Resultado</code></td>
+                            <td>Texto</td>
+                            <td><code>"jog"</code>, <code>"vit_j1"</code>, <code>"vit_j2"</code></td>
+                            <td>Estado do duelo: em andamento (<code>jog</code>) ou campeão definido da série.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 style="font-size: 1rem; font-weight: 600; margin: 1.5rem 0 0.5rem 0;">3.4. Par ou Ímpar (Jogadas Simultâneas)</h3>
+            <p style="font-size: 0.9rem; margin-bottom: 0.5rem;">Disputa em melhor de 3 rodadas onde o Jogador 1 escolhe a paridade e cada jogador lança de 0 a 10 dedos. Ao término da rodada, o Jogador 1 transmite o resultado no Multicast:</p>
+
+            <div class="code-block">
+                <pre><code>{
+  "jogo": "par_impar",
+  "Numero": 1,
+  "OpcaoJ1": "par",
+  "DedosJ1": 4,
+  "DedosJ2": 3,
+  "Soma": 7,
+  "VencedorRodada": 2,
+  "Placar": [0, 1],
+  "Resultado": "jog"
+}</code></pre>
+            </div>
+
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Campo</th>
+                            <th>Tipo</th>
+                            <th>Valores</th>
+                            <th>Significado no Jogo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>jogo</code></td>
+                            <td>Texto</td>
+                            <td><code>"par_impar"</code></td>
+                            <td>Identificador que instrui o <code>Display</code> a ativar a tela de Par ou Ímpar.</td>
+                        </tr>
+                        <tr>
+                            <td><code>Numero</code></td>
+                            <td>Inteiro</td>
+                            <td><code>1</code>, <code>2</code> ou <code>3</code></td>
+                            <td>Número da rodada atual na série de melhor de 3.</td>
+                        </tr>
+                        <tr>
+                            <td><code>OpcaoJ1</code></td>
+                            <td>Texto</td>
+                            <td><code>"par"</code> ou <code>"impar"</code></td>
+                            <td>Escolha de paridade do Jogador 1 (o Jogador 2 assume a oposta).</td>
+                        </tr>
+                        <tr>
+                            <td><code>DedosJ1</code></td>
+                            <td>Inteiro</td>
+                            <td><code>0</code> a <code>10</code></td>
+                            <td>Quantidade de dedos revelada pelo Jogador 1.</td>
+                        </tr>
+                        <tr>
+                            <td><code>DedosJ2</code></td>
+                            <td>Inteiro</td>
+                            <td><code>0</code> a <code>10</code></td>
+                            <td>Quantidade de dedos colocada pelo Jogador 2.</td>
+                        </tr>
+                        <tr>
+                            <td><code>Soma</code></td>
+                            <td>Inteiro</td>
+                            <td><code>0</code> a <code>20</code></td>
+                            <td>Soma total apurada (<code>DedosJ1 + DedosJ2</code>).</td>
+                        </tr>
+                        <tr>
+                            <td><code>VencedorRodada</code></td>
+                            <td>Inteiro</td>
+                            <td><code>1</code> ou <code>2</code></td>
+                            <td>Vencedor da rodada conforme a paridade da soma.</td>
+                        </tr>
+                        <tr>
+                            <td><code>Placar</code></td>
+                            <td>Lista com 2 inteiros</td>
+                            <td><code>[vitJ1, vitJ2]</code></td>
+                            <td>Placar cumulativo da disputa.</td>
+                        </tr>
+                        <tr>
+                            <td><code>Resultado</code></td>
+                            <td>Texto</td>
+                            <td><code>"jog"</code>, <code>"vit_j1"</code>, <code>"vit_j2"</code></td>
+                            <td>Estado do duelo: em andamento (<code>jog</code>) ou campeão definido.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 4. Cuidados de Implementação e Tratamento de Falhas -->
+        <section class="section-card">
+            <h2 class="section-title">4. Tratamento de Falhas e Regras do Jogo</h2>
+            <p>Pensando na estabilidade do jogo em rede e nos requisitos da disciplina, implementamos alguns cuidados
+                práticos:</p>
+
+            <ul class="bullet-list">
+                <li>
+                    <strong>Timeouts para evitar travamentos:</strong> Adicionamos um timeout de 60 segundos no RMI
+                    (caso um jogador entre e nenhum adversário apareça) e também no Socket TCP/UDP com
+                    <code>setSoTimeout(60000)</code>, evitando que o processo fique congelado se o outro jogador fechar
+                    o terminal ou cair no meio da partida.
+                </li>
+                <li>
+                    <strong>Prevenção contra jogadas inválidas no Jogo da Velha:</strong> A cada lance recebido, o programa
+                    confere se a casa já não estava preenchida e se a numeração sequencial do turno está em ordem. Se
+                    houver qualquer inconsistência, a jogada não é aceita e o estado anterior é reenviado para manter a
+                    integridade da partida.
+                </li>
+                <li>
+                    <strong>Anti-Trapaça Criptográfico em Jogos Simultâneos (Commit-Reveal com SHA-256):</strong> Em jogos como Pedra, Papel e Tesoura e Par ou Ímpar, as jogadas precisam ser simultâneas e secretas. Se os dados fossem trafegados em texto puro pelo Socket, quem lê primeiro na rede poderia espiar a jogada do oponente antes de digitar a sua. Para neutralizar trapaças na rede, implementamos o protocolo criptográfico de compromisso (*Commit-Reveal*) com <code>SHA-256</code> em Java puro (<code>java.security.MessageDigest</code>):
+                    <ul style="padding-left: 1.25rem; margin-top: 0.4rem; list-style-type: circle;">
+                        <li><strong>1. Fase de Compromisso (Commit):</strong> O Jogador 1 gera um <em>salt</em> aleatório e envia ao oponente apenas o hash criptográfico <code>SHA256(jogada + ":" + salt)</code>.</li>
+                        <li><strong>2. Fase de Escolha:</strong> O Jogador 2 envia abertamente sua jogada (pois é computacionalmente inviável reverter o hash do Jogador 1).</li>
+                        <li><strong>3. Fase de Revelação e Auditoria (Reveal):</strong> O Jogador 1 revela abertamente sua jogada e o <em>salt</em>. O Jogador 2 recalcula o hash localmente. Se o hash calculado divergir do recebido no commit, o software acusa tentativa de adulteração e aborta a partida imediatamente.</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>Multicast sem jogadas duplicadas:</strong> Para não poluir a tela dos espectadores, apenas o
+                    jogador que concluiu a rodada publica o estado no grupo Multicast
+                    (<code>225.1.1.NN:88NN</code>). Quem apenas recebeu o lance atualiza seu estado local sem
+                    retransmitir.
+                </li>
+                <li>
+                    <strong>Suporte universal a TCP e UDP (Bônus):</strong> O sistema suporta tanto conexões orientadas a fluxo
+                    (TCP) quanto por datagramas (UDP) em qualquer um dos três jogos. O servidor de pareamento gerencia filas segregadas por protocolo
+                    e por jogo para que jogadores de TCP joguem entre si e jogadores de UDP também, cumprindo o bônus proposto.
+                </li>
+            </ul>
+        </section>
+
+        <!-- 5. Como Compilar e Rodar -->
+        <section class="section-card">
+            <h2 class="section-title">5. Como Compilar e Rodar</h2>
+
+            <p><strong>1. Compilação (direta com javac, sem precisar de Maven ou Gradle):</strong></p>
+            <div class="code-block">
+                <button class="copy-button" onclick="copyCode(this)">Copiar</button>
+                <pre><code>javac *.java</code></pre>
+            </div>
+
+            <p style="margin-top: 1.5rem;"><strong>2. Como rodar nas máquinas virtuais da UERJ (usando a conta 14 como exemplo):</strong></p>
+
+            <h3 style="font-size: 0.95rem; font-weight: 700; margin: 1.25rem 0 0.5rem 0; color: var(--primary);">Opção A: Jogo da Velha (Clássico)</h3>
+
+            <p style="font-size: 0.88rem; margin-bottom: 0.35rem; color: var(--text-primary);">• Terminal 1 na VM <code>152.92.236.14</code> (Servidor RMI):</p>
+            <div class="code-block">
+                <button class="copy-button" onclick="copyCode(this)">Copiar</button>
+                <pre><code>java ServidorMatch 14</code></pre>
+            </div>
+
+            <p style="font-size: 0.88rem; margin-bottom: 0.35rem; color: var(--text-primary);">• Terminal 2 em qualquer máquina (Display Multicast):</p>
+            <div class="code-block">
+                <button class="copy-button" onclick="copyCode(this)">Copiar</button>
+                <pre><code>java Display 14</code></pre>
+            </div>
+
+            <p style="font-size: 0.88rem; margin-bottom: 0.35rem; color: var(--text-primary);">• Terminal 3 na VM <code>152.92.236.16</code> (Jogador 1):</p>
+            <div class="code-block">
+                <button class="copy-button" onclick="copyCode(this)">Copiar</button>
+                <pre><code>java Jogador 14 5001 152.92.236.14 tcp 152.92.236.16 velha</code></pre>
+            </div>
+
+            <p style="font-size: 0.88rem; margin-bottom: 0.35rem; color: var(--text-primary);">• Terminal 4 na VM <code>152.92.236.17</code> (Jogador 2):</p>
+            <div class="code-block">
+                <button class="copy-button" onclick="copyCode(this)">Copiar</button>
+                <pre><code>java Jogador 14 5002 152.92.236.14 tcp 152.92.236.17 velha</code></pre>
+            </div>
+
+            <h3 style="font-size: 0.95rem; font-weight: 700; margin: 1.5rem 0 0.5rem 0; color: var(--primary);">Opção B: Pedra, Papel e Tesoura (PPT com Commit-Reveal)</h3>
+
+            <p style="font-size: 0.88rem; margin-bottom: 0.35rem; color: var(--text-primary);">• Terminal 3 na VM <code>152.92.236.16</code> (Jogador 1):</p>
+            <div class="code-block">
+                <button class="copy-button" onclick="copyCode(this)">Copiar</button>
+                <pre><code>java Jogador 14 5001 152.92.236.14 tcp 152.92.236.16 ppt</code></pre>
+            </div>
+
+            <p style="font-size: 0.88rem; margin-bottom: 0.35rem; color: var(--text-primary);">• Terminal 4 na VM <code>152.92.236.17</code> (Jogador 2):</p>
+            <div class="code-block">
+                <button class="copy-button" onclick="copyCode(this)">Copiar</button>
+                <pre><code>java Jogador 14 5002 152.92.236.14 tcp 152.92.236.17 ppt</code></pre>
+            </div>
+
+            <h3 style="font-size: 0.95rem; font-weight: 700; margin: 1.5rem 0 0.5rem 0; color: var(--primary);">Opção C: Par ou Ímpar (com UDP demonstrado)</h3>
+
+            <p style="font-size: 0.88rem; margin-bottom: 0.35rem; color: var(--text-primary);">• Terminal 3 na VM <code>152.92.236.16</code> (Jogador 1 via UDP):</p>
+            <div class="code-block">
+                <button class="copy-button" onclick="copyCode(this)">Copiar</button>
+                <pre><code>java Jogador 14 5001 152.92.236.14 udp 152.92.236.16 par_impar</code></pre>
+            </div>
+
+            <p style="font-size: 0.88rem; margin-bottom: 0.35rem; color: var(--text-primary);">• Terminal 4 na VM <code>152.92.236.17</code> (Jogador 2 via UDP):</p>
+            <div class="code-block">
+                <button class="copy-button" onclick="copyCode(this)">Copiar</button>
+                <pre><code>java Jogador 14 5002 152.92.236.14 udp 152.92.236.17 par_impar</code></pre>
+            </div>
+
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 1rem;">
+                <em>💡 Dica: Se o último parâmetro do comando do jogador for omitido, o sistema assume <code>velha</code> automaticamente por retrocompatibilidade.</em>
+            </p>
+        </section>
+
+        <!-- Rodapé -->
+        <footer>
+            <p>Universidade do Estado do Rio de Janeiro (UERJ) • Instituto de Matemática e Estatística (IME)</p>
+            <p style="margin-top: 0.25rem;">Departamento de Informática e Ciência da Computação • Sistemas Distribuídos
+            </p>
+        </footer>
+
+    </div>
+
+    <!-- Script para o botão de copiar e controle de tema -->
+    <script>
+        function copyCode(btn) {
+            const pre = btn.nextElementSibling;
+            const text = pre.innerText;
+            navigator.clipboard.writeText(text).then(function () {
+                const originalText = btn.textContent;
+                btn.textContent = "Copiado! ✓";
+                btn.style.color = "#10b981";
+                btn.style.borderColor = "#10b981";
+                setTimeout(function () {
+                    btn.textContent = originalText;
+                    btn.style.color = "";
+                    btn.style.borderColor = "";
+                }, 2000);
+            });
+        }
+
+        function updateThemeButton(theme) {
+            const btn = document.getElementById('themeToggleBtn');
+            if (!btn) return;
+            if (theme === 'dark') {
+                btn.innerHTML = '☀️ Modo Claro';
+            } else {
+                btn.innerHTML = '🌙 Modo Escuro';
+            }
+        }
+
+        function toggleTheme() {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const nextTheme = isDark ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', nextTheme);
+            localStorage.setItem('theme', nextTheme);
+            updateThemeButton(nextTheme);
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            updateThemeButton(currentTheme);
+        });
+    </script>
+
+</body>
+
+</html>
