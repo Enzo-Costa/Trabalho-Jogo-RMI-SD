@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suíte de Jogos Distribuídos • Sistemas Distribuídos • UERJ</title>
+    <title>Suíte de Jogos • Sistemas Distribuídos • UERJ</title>
 
     <script>
         (function () {
@@ -510,7 +510,8 @@
                 </button>
             </div>
             <h1>Suíte de Jogos Distribuídos</h1>
-            <p class="subtitle">Trabalho Prático da Disciplina de Sistemas Distribuídos: Jogo da Velha, Pedra-Papel-Tesoura e Par ou Ímpar • Prof. Alexandre Sztajnberg</p>
+            <p class="subtitle">Trabalho Prático da Disciplina de Sistemas Distribuídos: Jogo da Velha,
+                Pedra-Papel-Tesoura e Par ou Ímpar • Prof. Alexandre Sztajnberg</p>
 
             <div class="meta-grid">
                 <div class="meta-item">
@@ -536,11 +537,15 @@
         <section class="pitch-section">
             <div class="pitch-text">
                 <h2>🎥 Vídeo de Apresentação (Pitch de 10 min)</h2>
-                <p>Gravamos uma explicação em vídeo detalhando a arquitetura em 3 programas Java, a interface modular <code>IJogo</code>, o pareamento via RMI, a comunicação P2P via Sockets TCP/UDP, a garantia de honestidade criptográfica com Commit-Reveal (SHA-256) em jogos simultâneos e a exibição ao vivo no Multicast.</p>
+                <p>Gravamos uma explicação em vídeo detalhando a arquitetura em 3 programas Java, a interface modular
+                    <code>IJogo</code>, o pareamento via RMI, a comunicação P2P via Sockets TCP/UDP, a garantia de
+                    honestidade criptográfica com Commit-Reveal (SHA-256) em jogos simultâneos e a exibição ao vivo no
+                    Multicast.
+                </p>
             </div>
             <!-- Substitua a URL abaixo pelo link do seu vídeo do YouTube ou Drive -->
-            <a href="https://youtu.be/SEU_VIDEO_AQUI" target="_blank" class="btn-pitch">
-                Assistir ao Vídeo no YouTube &rarr;
+            <a href="https://youtu.be/SvsVfStZWFU" target="_blank" class="btn-pitch">
+                Assista o nosso Pitch pelo YouTube! &rarr;
             </a>
         </section>
 
@@ -606,19 +611,9 @@
                     <li><strong>Passo 7 (Conexão Direta entre os Jogadores):</strong> Os jogadores conectam seus sockets
                         diretamente (TCP ou UDP) para iniciar o jogo.</li>
                     <li><strong>Passo 8 (Partida em Turnos e Multicast):</strong> Os jogadores alternam o envio de
-                        jogadas em JSON via Socket. A cada lance realizado, quem jogou envia o estado atualizado para
-                        o grupo Multicast para os Displays exibirem aos espectadores em tempo real.</li>
+                        jogadas em JSON via Socket. A cada lance realizado, quem jogou envia o tabuleiro atualizado para
+                        o grupo Multicast para os Displays exibirem aos espectadores.</li>
                 </ol>
-            </div>
-
-            <div class="steps-container" style="margin-top: 1.25rem;">
-                <div class="steps-title">Suíte Multi-Jogos e Abstração Modular (Interface IJogo):</div>
-                <p style="font-size: 0.92rem; margin-bottom: 0.5rem;">Além do Jogo da Velha original, a infraestrutura foi projetada para suportar múltiplos jogos em rede (<strong>Pedra, Papel e Tesoura</strong> e <strong>Par ou Ímpar</strong>) de forma modular e limpa:</p>
-                <ul class="steps-list" style="margin-top: 0.5rem;">
-                    <li><strong>Servidor de Pareamento (<code>ServidorMatch</code>):</strong> Gerencia filas concorrentes segregadas por chave composta (<code>protocolo + "_" + jogo</code>), permitindo que partidas de Velha, PPT e Par ou Ímpar ocorram simultaneamente no laboratório sem colisão.</li>
-                    <li><strong>Interface Polimórfica (<code>IJogo</code> em <code>Jogador</code>):</strong> As regras de cada jogo (lógica de rodadas, entradas e apuração de placar) são isoladas em classes dedicadas (<code>JogoVelha</code>, <code>JogoPPT</code>, <code>JogoParOuImpar</code>), reaproveitando 100% da camada de rede e transporte (TCP/UDP).</li>
-                    <li><strong>Display Multicast Adaptativo (<code>Display</code>):</strong> Lê o campo <code>"jogo"</code> em cada datagrama UDP Multicast e adapta dinamicamente sua renderização no terminal (grade 3x3 para Velha, duelo de ícones para PPT e contagem de dedos com paridade para Par ou Ímpar).</li>
-                </ul>
             </div>
         </section>
 
@@ -665,7 +660,7 @@
                             <td><strong>Displays (Espectadores)</strong></td>
                             <td>Qualquer máquina</td>
                             <td>IP <code>225.1.1.NN</code> na Porta <code>8800 + NN</code> (ex: <code>8814</code>)</td>
-                            <td><span class="tag-proto tag-udp">UDP Multicast</span> (Velha, PPT e Par ou Ímpar)</td>
+                            <td><span class="tag-proto tag-udp">UDP Multicast</span></td>
                         </tr>
                     </tbody>
                 </table>
@@ -680,7 +675,7 @@
 
             <h3 style="font-size: 1rem; font-weight: 600; margin: 1.25rem 0 0.5rem 0;">3.1. Pareamento no RMI</h3>
             <p style="font-size: 0.9rem; margin-bottom: 0.5rem;">O que o jogador envia ao chamar
-                <code>getOponent(...)</code> e o que o servidor devolve (o campo <code>"jogo"</code> aceita <code>"velha"</code>, <code>"ppt"</code> ou <code>"par_impar"</code>; se omitido, assume <code>"velha"</code> por retrocompatibilidade):
+                <code>getOponent(...)</code> e o que o servidor devolve:
             </p>
             <div class="table-responsive">
                 <table class="data-table">
@@ -693,18 +688,19 @@
                     <tbody>
                         <tr>
                             <td>
-                                <code>{"ip":"152.92.236.16","porta":5001,"protocolo":"tcp","jogo":"velha"}</code>
+                                <code>{"ip":"152.92.236.16","porta":5001,"protocolo":"tcp"}</code>
                             </td>
                             <td>
-                                <code>{"ip":"152.92.236.17","porta":5002,"jogo":"velha","inicia":true}</code>
+                                <code>{"ip":"152.92.236.17","porta":5002,"inicia":true}</code>
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
 
-            <h3 style="font-size: 1rem; font-weight: 600; margin: 1.5rem 0 0.5rem 0;">3.2. Jogo da Velha (Turnos Alternados - Visão Pública)</h3>
-            <p style="font-size: 0.9rem; margin-bottom: 0.5rem;">A cada lance, os jogadores enviam um para o outro e
+            <h3 style="font-size: 1rem; font-weight: 600; margin: 1.5rem 0 0.5rem 0;">3.2. Troca de Jogadas e
+                Transmissão no Multicast</h3>
+            <p style="font-size: 0.9rem; margin-bottom: 0.5rem;">A cada turno, os jogadores enviam um para o outro e
                 para os displays exatamente esta estrutura de mensagem:</p>
 
             <div class="code-block">
@@ -757,164 +753,6 @@
                     </tbody>
                 </table>
             </div>
-
-            <h3 style="font-size: 1rem; font-weight: 600; margin: 1.5rem 0 0.5rem 0;">3.3. Pedra, Papel e Tesoura (Jogadas Simultâneas - PPT)</h3>
-            <p style="font-size: 0.9rem; margin-bottom: 0.5rem;">Disputa em melhor de 3 rodadas. Ao final de cada rodada apurada via Commit-Reveal (SHA-256), o Jogador 1 publica o estado da disputa no Multicast:</p>
-
-            <div class="code-block">
-                <pre><code>{
-  "jogo": "ppt",
-  "Numero": 1,
-  "EscolhaJ1": "pedra",
-  "EscolhaJ2": "tesoura",
-  "VencedorRodada": 1,
-  "Placar": [1, 0],
-  "Resultado": "jog"
-}</code></pre>
-            </div>
-
-            <div class="table-responsive">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Campo</th>
-                            <th>Tipo</th>
-                            <th>Valores</th>
-                            <th>Significado no Jogo</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><code>jogo</code></td>
-                            <td>Texto</td>
-                            <td><code>"ppt"</code></td>
-                            <td>Identificador que instrui o <code>Display</code> a ativar a tela de Pedra, Papel e Tesoura.</td>
-                        </tr>
-                        <tr>
-                            <td><code>Numero</code></td>
-                            <td>Inteiro</td>
-                            <td><code>1</code>, <code>2</code> ou <code>3</code></td>
-                            <td>Número da rodada atual na série de melhor de 3.</td>
-                        </tr>
-                        <tr>
-                            <td><code>EscolhaJ1</code></td>
-                            <td>Texto</td>
-                            <td><code>"pedra"</code>, <code>"papel"</code>, <code>"tesoura"</code></td>
-                            <td>Escolha revelada e validada do Jogador 1.</td>
-                        </tr>
-                        <tr>
-                            <td><code>EscolhaJ2</code></td>
-                            <td>Texto</td>
-                            <td><code>"pedra"</code>, <code>"papel"</code>, <code>"tesoura"</code></td>
-                            <td>Escolha enviada abertamente pelo Jogador 2.</td>
-                        </tr>
-                        <tr>
-                            <td><code>VencedorRodada</code></td>
-                            <td>Inteiro</td>
-                            <td><code>0</code>, <code>1</code> ou <code>2</code></td>
-                            <td>Resultado da rodada: <code>0</code> = empate, <code>1</code> = ponto J1, <code>2</code> = ponto J2.</td>
-                        </tr>
-                        <tr>
-                            <td><code>Placar</code></td>
-                            <td>Lista com 2 inteiros</td>
-                            <td><code>[vitJ1, vitJ2]</code></td>
-                            <td>Placar cumulativo da melhor de 3.</td>
-                        </tr>
-                        <tr>
-                            <td><code>Resultado</code></td>
-                            <td>Texto</td>
-                            <td><code>"jog"</code>, <code>"vit_j1"</code>, <code>"vit_j2"</code></td>
-                            <td>Estado do duelo: em andamento (<code>jog</code>) ou campeão definido da série.</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <h3 style="font-size: 1rem; font-weight: 600; margin: 1.5rem 0 0.5rem 0;">3.4. Par ou Ímpar (Jogadas Simultâneas)</h3>
-            <p style="font-size: 0.9rem; margin-bottom: 0.5rem;">Disputa em melhor de 3 rodadas onde o Jogador 1 escolhe a paridade e cada jogador lança de 0 a 10 dedos. Ao término da rodada, o Jogador 1 transmite o resultado no Multicast:</p>
-
-            <div class="code-block">
-                <pre><code>{
-  "jogo": "par_impar",
-  "Numero": 1,
-  "OpcaoJ1": "par",
-  "DedosJ1": 4,
-  "DedosJ2": 3,
-  "Soma": 7,
-  "VencedorRodada": 2,
-  "Placar": [0, 1],
-  "Resultado": "jog"
-}</code></pre>
-            </div>
-
-            <div class="table-responsive">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Campo</th>
-                            <th>Tipo</th>
-                            <th>Valores</th>
-                            <th>Significado no Jogo</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><code>jogo</code></td>
-                            <td>Texto</td>
-                            <td><code>"par_impar"</code></td>
-                            <td>Identificador que instrui o <code>Display</code> a ativar a tela de Par ou Ímpar.</td>
-                        </tr>
-                        <tr>
-                            <td><code>Numero</code></td>
-                            <td>Inteiro</td>
-                            <td><code>1</code>, <code>2</code> ou <code>3</code></td>
-                            <td>Número da rodada atual na série de melhor de 3.</td>
-                        </tr>
-                        <tr>
-                            <td><code>OpcaoJ1</code></td>
-                            <td>Texto</td>
-                            <td><code>"par"</code> ou <code>"impar"</code></td>
-                            <td>Escolha de paridade do Jogador 1 (o Jogador 2 assume a oposta).</td>
-                        </tr>
-                        <tr>
-                            <td><code>DedosJ1</code></td>
-                            <td>Inteiro</td>
-                            <td><code>0</code> a <code>10</code></td>
-                            <td>Quantidade de dedos revelada pelo Jogador 1.</td>
-                        </tr>
-                        <tr>
-                            <td><code>DedosJ2</code></td>
-                            <td>Inteiro</td>
-                            <td><code>0</code> a <code>10</code></td>
-                            <td>Quantidade de dedos colocada pelo Jogador 2.</td>
-                        </tr>
-                        <tr>
-                            <td><code>Soma</code></td>
-                            <td>Inteiro</td>
-                            <td><code>0</code> a <code>20</code></td>
-                            <td>Soma total apurada (<code>DedosJ1 + DedosJ2</code>).</td>
-                        </tr>
-                        <tr>
-                            <td><code>VencedorRodada</code></td>
-                            <td>Inteiro</td>
-                            <td><code>1</code> ou <code>2</code></td>
-                            <td>Vencedor da rodada conforme a paridade da soma.</td>
-                        </tr>
-                        <tr>
-                            <td><code>Placar</code></td>
-                            <td>Lista com 2 inteiros</td>
-                            <td><code>[vitJ1, vitJ2]</code></td>
-                            <td>Placar cumulativo da disputa.</td>
-                        </tr>
-                        <tr>
-                            <td><code>Resultado</code></td>
-                            <td>Texto</td>
-                            <td><code>"jog"</code>, <code>"vit_j1"</code>, <code>"vit_j2"</code></td>
-                            <td>Estado do duelo: em andamento (<code>jog</code>) ou campeão definido.</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
         </section>
 
         <!-- 4. Cuidados de Implementação e Tratamento de Falhas -->
@@ -931,29 +769,21 @@
                     o terminal ou cair no meio da partida.
                 </li>
                 <li>
-                    <strong>Prevenção contra jogadas inválidas no Jogo da Velha:</strong> A cada lance recebido, o programa
+                    <strong>Prevenção contra jogadas inválidas (Anti-Cheat):</strong> A cada lance recebido, o programa
                     confere se a casa já não estava preenchida e se a numeração sequencial do turno está em ordem. Se
                     houver qualquer inconsistência, a jogada não é aceita e o estado anterior é reenviado para manter a
                     integridade da partida.
                 </li>
                 <li>
-                    <strong>Anti-Trapaça Criptográfico em Jogos Simultâneos (Commit-Reveal com SHA-256):</strong> Em jogos como Pedra, Papel e Tesoura e Par ou Ímpar, as jogadas precisam ser simultâneas e secretas. Se os dados fossem trafegados em texto puro pelo Socket, quem lê primeiro na rede poderia espiar a jogada do oponente antes de digitar a sua. Para neutralizar trapaças na rede, implementamos o protocolo criptográfico de compromisso (*Commit-Reveal*) com <code>SHA-256</code> em Java puro (<code>java.security.MessageDigest</code>):
-                    <ul style="padding-left: 1.25rem; margin-top: 0.4rem; list-style-type: circle;">
-                        <li><strong>1. Fase de Compromisso (Commit):</strong> O Jogador 1 gera um <em>salt</em> aleatório e envia ao oponente apenas o hash criptográfico <code>SHA256(jogada + ":" + salt)</code>.</li>
-                        <li><strong>2. Fase de Escolha:</strong> O Jogador 2 envia abertamente sua jogada (pois é computacionalmente inviável reverter o hash do Jogador 1).</li>
-                        <li><strong>3. Fase de Revelação e Auditoria (Reveal):</strong> O Jogador 1 revela abertamente sua jogada e o <em>salt</em>. O Jogador 2 recalcula o hash localmente. Se o hash calculado divergir do recebido no commit, o software acusa tentativa de adulteração e aborta a partida imediatamente.</li>
-                    </ul>
-                </li>
-                <li>
                     <strong>Multicast sem jogadas duplicadas:</strong> Para não poluir a tela dos espectadores, apenas o
-                    jogador que concluiu a rodada publica o estado no grupo Multicast
-                    (<code>225.1.1.NN:88NN</code>). Quem apenas recebeu o lance atualiza seu estado local sem
-                    retransmitir.
+                    jogador que acabou de fazer a jogada publica o estado no grupo Multicast
+                    (<code>225.1.1.NN:88NN</code>). Quem apenas recebeu o lance atualiza seu tabuleiro localmente sem
+                    reenviar.
                 </li>
                 <li>
-                    <strong>Suporte universal a TCP e UDP (Bônus):</strong> O sistema suporta tanto conexões orientadas a fluxo
-                    (TCP) quanto por datagramas (UDP) em qualquer um dos três jogos. O servidor de pareamento gerencia filas segregadas por protocolo
-                    e por jogo para que jogadores de TCP joguem entre si e jogadores de UDP também, cumprindo o bônus proposto.
+                    <strong>Suporte a TCP e UDP (Bônus):</strong> O sistema suporta tanto conexões orientadas a fluxo
+                    (TCP) quanto por datagramas (UDP). O servidor de pareamento gerencia filas separadas por protocolo
+                    para que jogadores de TCP joguem entre si e jogadores de UDP também, cumprindo o bônus proposto.
                 </li>
             </ul>
         </section>
@@ -968,64 +798,45 @@
                 <pre><code>javac *.java</code></pre>
             </div>
 
-            <p style="margin-top: 1.5rem;"><strong>2. Como rodar nas máquinas virtuais da UERJ (usando a conta 14 como exemplo):</strong></p>
+            <p style="margin-top: 1.5rem;"><strong>2. Como rodar nas máquinas virtuais da UERJ (usando a conta 14 como
+                    exemplo):</strong></p>
 
-            <h3 style="font-size: 0.95rem; font-weight: 700; margin: 1.25rem 0 0.5rem 0; color: var(--primary);">Opção A: Jogo da Velha (Clássico)</h3>
-
-            <p style="font-size: 0.88rem; margin-bottom: 0.35rem; color: var(--text-primary);">• Terminal 1 na VM <code>152.92.236.14</code> (Servidor RMI):</p>
+            <p style="font-size: 0.88rem; margin-bottom: 0.35rem; color: var(--text-primary);">• Terminal 1 na VM
+                <code>152.92.236.14</code> (Inicia o servidor de pareamento RMI):
+            </p>
             <div class="code-block">
                 <button class="copy-button" onclick="copyCode(this)">Copiar</button>
                 <pre><code>java ServidorMatch 14</code></pre>
             </div>
 
-            <p style="font-size: 0.88rem; margin-bottom: 0.35rem; color: var(--text-primary);">• Terminal 2 em qualquer máquina (Display Multicast):</p>
+            <p style="font-size: 0.88rem; margin-bottom: 0.35rem; color: var(--text-primary);">• Terminal 2 em qualquer
+                VM ou máquina local (Inicia o display espectador):</p>
             <div class="code-block">
                 <button class="copy-button" onclick="copyCode(this)">Copiar</button>
                 <pre><code>java Display 14</code></pre>
             </div>
 
-            <p style="font-size: 0.88rem; margin-bottom: 0.35rem; color: var(--text-primary);">• Terminal 3 na VM <code>152.92.236.16</code> (Jogador 1):</p>
+            <p style="font-size: 0.88rem; margin-bottom: 0.35rem; color: var(--text-primary);">• Terminal 3 na VM
+                <code>152.92.236.16</code> (Conecta o Jogador 1):
+            </p>
             <div class="code-block">
                 <button class="copy-button" onclick="copyCode(this)">Copiar</button>
-                <pre><code>java Jogador 14 5001 152.92.236.14 tcp 152.92.236.16 velha</code></pre>
+                <pre><code>java Jogador 14 5001 152.92.236.14 tcp</code></pre>
             </div>
 
-            <p style="font-size: 0.88rem; margin-bottom: 0.35rem; color: var(--text-primary);">• Terminal 4 na VM <code>152.92.236.17</code> (Jogador 2):</p>
+            <p style="font-size: 0.88rem; margin-bottom: 0.35rem; color: var(--text-primary);">• Terminal 4 na VM
+                <code>152.92.236.17</code> (Conecta o Jogador 2 e inicia a partida):
+            </p>
             <div class="code-block">
                 <button class="copy-button" onclick="copyCode(this)">Copiar</button>
-                <pre><code>java Jogador 14 5002 152.92.236.14 tcp 152.92.236.17 velha</code></pre>
+                <pre><code>java Jogador 14 5002 152.92.236.14 tcp</code></pre>
             </div>
 
-            <h3 style="font-size: 0.95rem; font-weight: 700; margin: 1.5rem 0 0.5rem 0; color: var(--primary);">Opção B: Pedra, Papel e Tesoura (PPT com Commit-Reveal)</h3>
-
-            <p style="font-size: 0.88rem; margin-bottom: 0.35rem; color: var(--text-primary);">• Terminal 3 na VM <code>152.92.236.16</code> (Jogador 1):</p>
-            <div class="code-block">
-                <button class="copy-button" onclick="copyCode(this)">Copiar</button>
-                <pre><code>java Jogador 14 5001 152.92.236.14 tcp 152.92.236.16 ppt</code></pre>
-            </div>
-
-            <p style="font-size: 0.88rem; margin-bottom: 0.35rem; color: var(--text-primary);">• Terminal 4 na VM <code>152.92.236.17</code> (Jogador 2):</p>
-            <div class="code-block">
-                <button class="copy-button" onclick="copyCode(this)">Copiar</button>
-                <pre><code>java Jogador 14 5002 152.92.236.14 tcp 152.92.236.17 ppt</code></pre>
-            </div>
-
-            <h3 style="font-size: 0.95rem; font-weight: 700; margin: 1.5rem 0 0.5rem 0; color: var(--primary);">Opção C: Par ou Ímpar (com UDP demonstrado)</h3>
-
-            <p style="font-size: 0.88rem; margin-bottom: 0.35rem; color: var(--text-primary);">• Terminal 3 na VM <code>152.92.236.16</code> (Jogador 1 via UDP):</p>
-            <div class="code-block">
-                <button class="copy-button" onclick="copyCode(this)">Copiar</button>
-                <pre><code>java Jogador 14 5001 152.92.236.14 udp 152.92.236.16 par_impar</code></pre>
-            </div>
-
-            <p style="font-size: 0.88rem; margin-bottom: 0.35rem; color: var(--text-primary);">• Terminal 4 na VM <code>152.92.236.17</code> (Jogador 2 via UDP):</p>
-            <div class="code-block">
-                <button class="copy-button" onclick="copyCode(this)">Copiar</button>
-                <pre><code>java Jogador 14 5002 152.92.236.14 udp 152.92.236.17 par_impar</code></pre>
-            </div>
-
-            <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 1rem;">
-                <em>💡 Dica: Se o último parâmetro do comando do jogador for omitido, o sistema assume <code>velha</code> automaticamente por retrocompatibilidade.</em>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 0.75rem;">
+                <em>💡 Dica: Para testar a versão em UDP, substitua <code>tcp</code> por <code>udp</code>. Para jogar
+                    outros jogos, basta passar o tipo no final do comando: <code>ppt</code> (Pedra, Papel e Tesoura) ou
+                    <code>par_impar</code> (Par ou Ímpar). Exemplo:
+                    <code>java Jogador 14 5001 152.92.236.14 tcp ppt</code>.</em>
             </p>
         </section>
 
